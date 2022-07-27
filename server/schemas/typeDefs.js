@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
   type Book {
@@ -12,10 +12,11 @@ const typeDefs = gql`
     title: String!
   }
 
-  # TODO: Add virtual from User.js
+  # TODO: Add virtual and method from User.js
   # TODO: Add validation to email
   # TODO: Are there unique properties in GraphQL?
   type User {
+    _id: ID
     username: String!
     email: String!
     password: String!
@@ -24,15 +25,16 @@ const typeDefs = gql`
   }
 
   type Query {
-    #using a utils/auth before getSingleUser
-    getSingleUser(id: ID!): User
+    # TODO: using a utils/auth before getSingleUser
+    getSingleUser(id: ID, username: String): User
   }
 
   type Mutation: {
     createUser(username: String!, email: String!, password: String!): User
-    saveBook(userId: ID!, bookID: String!, authors: [String], description: String!, image: String, link: String, title: String!): User
-    deleteBook(userId: ID!): User
-    login(username: String!, email: String!): User
+    # TODO: Can arguments be separated on different lines?
+    saveBook(userId: ID!, authors: [String], description: String!, bookId: String!, image: String, link: String, title: String!): User
+    deleteBook(userId: ID!, bookId: String!): User
+    login(username: String!, email: String!, password: String!): User
   } 
 `;
 
