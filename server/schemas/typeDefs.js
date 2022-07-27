@@ -22,6 +22,18 @@ const typeDefs = gql`
     # set savedBooks to be an array of data that adheres to the bookSchema
     savedBooks: [Book]
   }
+
+  type Query {
+    #using a utils/auth before getSingleUser
+    getSingleUser(id: ID!): User
+  }
+
+  type Mutation: {
+    createUser(username: String!, email: String!, password: String!): User
+    saveBook(userId: ID!, bookID: String!, authors: [String], description: String!, image: String, link: String, title: String!): User
+    deleteBook(userId: ID!): User
+    login(username: String!, email: String!): User
+  } 
 `;
 
 module.exports = typeDefs;
