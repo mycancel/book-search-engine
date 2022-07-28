@@ -8,9 +8,9 @@ const { AuthenticationError } = require('apollo-server-express');
 const resolvers = {
   Query: {
     // get a single user by either their id or their username
-    getSingleUser: async (parent, { userId, username }) => {
+    getSingleUser: async (parent, { id, username }, context) => {
       const foundUser =  await User.findOne({
-        $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
+        $or: [{ _id: context.user ? context.user._id : id }, { username: username }],
       });
       if (!foundUser) {
         throw new AuthenticationError('Cannot find a user with this id!');
@@ -31,35 +31,30 @@ const resolvers = {
     },
     // save a book to a user's `savedBooks` field by adding it to the set (to prevent duplicates)
     saveBook: async (parent, args) => {
-      try {
-        return await User.findOneAndUpdate(
-          { _id: args.userId },
-          {
-            $addToSet: {
-              savedBooks: {
-                authors: args.authors,
-                description: args.description,
-                bookId: args.bookId,
-                image: args.image,
-                link: args.link,
-                title: args.title,
-              },
+      return await User.findOneAndUpdate(
+        { _id: args.id },
+        {
+          $addToSet: {
+            savedBooks: {
+              authors: args.authors,
+              description: args.description,
+              bookId: args.bookId,
+              image: args.image,
+              link: args.link,
+              title: args.title,
             },
           },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      } catch (err) {
-        console.log(err);
-        throw new AuthenticationError('Something is wrong!');
-      }
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
     },
     // remove a book from `savedBooks`
-    deleteBook: async (parent, { userId, bookId }) => {
+    deleteBook: async (parent, { id, bookId }) => {
       const updatedUser = await User.findOneAndUpdate(
-        { _id: userId },
+        { _id: id },
         { $pull: { savedBooks: { bookId: bookId } } },
         { new: true }
       );
@@ -75,7 +70,7 @@ const resolvers = {
         throw new AuthenticationError("Can't find this user");
       }
   
-      const correctPw = await user.isCorrectPassword(body.password);
+      const correctPw = await user.isCorrectPassword(password);
   
       if (!correctPw) {
         throw new AuthenticationError('Wrong password!');
