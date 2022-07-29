@@ -67,23 +67,25 @@ const SearchBooks = () => {
       return false;
     }
     
+    // get userData through token
+    const { data } = Auth.getProfile(token);
+    const userData = data;
+
+    if (!userData) {
+      return false;
+    }
+
     try {
+      // Saves book to user information through saveBook mutation
       const { data } = await saveBook({
         variables: { 
-          bookToSave,
-          token
+          id: userData._id,
+          ...bookToSave
         }
       });
 
-      if (!data.ok) {
-        console.log(data);
-        throw new Error('something went wrong!');
-      }
-
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-
-      window.location.reload();
     } catch (err) {
       console.error(err);
     }
