@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-// import { loginUser } from '../utils/API';
+// Import the `useMutation()` hook from Apollo Client
 import { useMutation } from '@apollo/client';
+// Import LOGIN_USER mutation
 import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
@@ -29,6 +30,7 @@ const LoginForm = () => {
     }
 
     try {
+      // Verify Login Data through login mutation
       const { data } = await loginUser({
         variables: { ...userFormData }
       });

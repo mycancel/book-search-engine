@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-// import { createUser } from '../utils/API';
+// Import the `useMutation()` hook from Apollo Client
 import { useMutation } from '@apollo/client';
+// Import CREATE_USER mutation
 import { CREATE_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
@@ -32,10 +33,12 @@ const SignupForm = () => {
     }
 
     try {
+      // Post new user information through createUser Mutation
       const { data } = await createUser({
         variables: {...userFormData}
       });
 
+      // user is logged in
       Auth.login(data.createUser.token);
     } catch (err) {
       console.error(err);

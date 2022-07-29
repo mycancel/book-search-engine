@@ -4,8 +4,7 @@ import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'reac
 import Auth from '../utils/auth';
 // Import the `useMutation()` hook from Apollo Client
 import { useMutation } from '@apollo/client';
-
-// import { saveBook, searchGoogleBooks } from '../utils/API';
+// Import SAVE_BOOK mutation and searchGoogleBooks axios query
 import { SAVE_BOOK } from '../utils/mutations';
 import { searchGoogleBooks } from '../utils/queries';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
@@ -19,6 +18,7 @@ const SearchBooks = () => {
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
+  // Invoke `useMutation()` hook for SAVE_BOOK mutation
   const [saveBook] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
@@ -36,6 +36,7 @@ const SearchBooks = () => {
     }
 
     try {
+      // Gets Google Books data through axios request (in )
       const { data: { items } } = await searchGoogleBooks(searchInput);
 
       const bookData = items.map((book) => ({
