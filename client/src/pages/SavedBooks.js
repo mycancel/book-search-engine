@@ -37,6 +37,7 @@ const SavedBooks = () => {
           return false;
         }
 
+        // get current user's saved books
         const {data} = await getSingleUser( 
           {
             variables: {
@@ -62,22 +63,25 @@ const SavedBooks = () => {
     if (!token) {
       return false;
     }
+ 
+    // get userData through token
+    const authResponse = Auth.getProfile(token);
+    const user = authResponse.data;
+
+    if (!user) {
+      return false;
+    }
 
     try {
-      // const response = await deleteBook(bookId, token);
-      const { data } = deleteBook({
+      // deletes saved book from user's information
+      const { data } = await deleteBook({
         variables: {
-          id: token,
+          id: user._id,
           bookId: bookId
         }
       });
 
-      if (!data.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const updatedUser = await data.json();
-      setUserData(updatedUser);
+      setUserData(data.deleteBook);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
