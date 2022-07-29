@@ -24,7 +24,7 @@ const resolvers = {
     createUser: async (parent, args) => {
       const user = await User.create(args);
       if (!user) {
-        throw new AuthenticationError('Something is wrong!');
+        throw new AuthenticationError('User cannot be created. See Resolver.');
       }
       const token = signToken(user);
       return ({ token, user });
@@ -64,16 +64,16 @@ const resolvers = {
       return updatedUser;
     },
     // login a user, sign a token, and send it back (to client/src/components/LoginForm.js)
-    login: async (parent, { username, email, password }) => {
-      const user = await User.findOne({ $or: [{ username: username }, { email: email }] });
+    login: async (parent, args) => {
+      const user = await User.findOne({ $or: [{ username: args.username }, { email: args.email }] });
       if (!user) {
-        throw new AuthenticationError("Can't find this user");
+        throw new AuthenticationError("Can't find this user in resolver");
       }
   
-      const correctPw = await user.isCorrectPassword(password);
+      const correctPw = await user.isCorrectPassword(args.password);
   
       if (!correctPw) {
-        throw new AuthenticationError('Wrong password!');
+        throw new AuthenticationError('Wrong password as checked by resolver.');
       }
       const token = signToken(user);
       return ({ token, user });
