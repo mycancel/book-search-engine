@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
-// import { getMe, deleteBook } from '../utils/API';
+// Import the `useMutation()` and `useLazyQuery` hook from Apollo Client
+import { useLazyQuery, useMutation } from '@apollo/client';
+// Import QUERY_ME query and DELETE_BOOK mutation
 import { QUERY_ME } from '../utils/queries';
 import { DELETE_BOOK } from '../utils/mutations';
-import { useQuery, useMutation } from '@apollo/client';
 
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
+  // Invoke `useMutation()` hook for DELETE_BOOK mutation
   const [deleteBook]= useMutation( DELETE_BOOK );
-  const [getSingleUser]= useQuery( QUERY_ME );
+  // // Invoke `useQuery()` hook for QUERY_ME mutation
+  const [getSingleUser] = useLazyQuery( QUERY_ME );
   
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
@@ -26,16 +29,24 @@ const SavedBooks = () => {
           return false;
         }
 
-        const { data } = getSingleUser({
-          variables: token
-        });
+        // get userData through token
+        const authResponse = Auth.getProfile(token);
+        const user = authResponse.data;
 
-        if (!data.ok) {
-          throw new Error('something went wrong!');
+        if (!user) {
+          return false;
         }
 
-        const user = await data.json();
-        setUserData(user);
+        const {data} = await getSingleUser( 
+          {
+            variables: {
+              id: user._id,
+              username: user.username
+            }
+          }
+        );
+
+        setUserData(data.getSingleUser);
       } catch (err) {
         console.error(err);
       }

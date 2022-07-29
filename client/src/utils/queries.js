@@ -2,16 +2,15 @@ import { gql } from '@apollo/client';
 import axios from 'axios';
 
 export const QUERY_ME = gql`
-  query GetSingleUser($id: ID, $username: String) {
+  query GetSingleUser($id: ID!, $username: String!) {
     getSingleUser(id: $id, username: $username) {
-      _id
-      username
-      email
-      password
       savedBooks {
         _id
+        authors
         description
         bookId
+        image
+        link
         title
       }
     }

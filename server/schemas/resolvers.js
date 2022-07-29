@@ -7,6 +7,9 @@ const { AuthenticationError } = require('apollo-server-express');
 
 const resolvers = {
   Query: {
+    users: async () => {
+      return await User.find({}).populate('savedBooks');
+    },
     // get a single user by either their id or their username
     getSingleUser: async (parent, { id, username }, context) => {
       const foundUser =  await User.findOne({
